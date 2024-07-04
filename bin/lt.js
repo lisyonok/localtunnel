@@ -46,14 +46,9 @@ const { argv } = yargs
     alias: 'open',
     describe: 'Opens the tunnel URL in your browser',
   })
-  .option('i', {
-    alias: 'print-requests',
-    describe: 'Print basic request info',
-  })
   .require('port')
   .boolean('local-https')
   .boolean('allow-invalid-cert')
-  .boolean('print-requests')
   .help('help', 'Show this help and exit')
   .version(version);
 
