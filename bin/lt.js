@@ -46,7 +46,8 @@ const { argv } = yargs
     alias: 'open',
     describe: 'Opens the tunnel URL in your browser',
   })
-  .option('print-requests', {
+  .option('i', {
+    alias: 'print-requests',
     describe: 'Print basic request info',
   })
   .require('port')
@@ -73,11 +74,11 @@ if (typeof argv.port !== 'number') {
     local_key: argv.localKey,
     local_ca: argv.localCa,
     allow_invalid_cert: argv.allowInvalidCert,
-  }).catch(err => {
+  }).catch((err) => {
     throw err;
   });
 
-  tunnel.on('error', err => {
+  tunnel.on('error', (err) => {
     throw err;
   });
 
@@ -96,9 +97,13 @@ if (typeof argv.port !== 'number') {
     openurl.open(tunnel.url);
   }
 
-  if (argv['print-requests']) {
-    tunnel.on('request', info => {
-      console.log(new Date().toString(), info.method, info.path);
-    });
-  }
+  tunnel.on('request', (headers) => {
+    const date = new Date();
+    console.log(
+      `${date.toLocaleTimeString()}:${String(date.getMilliseconds()).padEnd(3, '0')}`,
+      headers.headers['x-forwarded-for'],
+      headers.method,
+      'https://' + headers.headers.host + headers.url
+    );
+  });
 })();
